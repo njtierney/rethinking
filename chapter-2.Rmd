@@ -1,0 +1,164 @@
+---
+title: "chapter-2-notes"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+# Highlights
+
+> Soon to appear sections that I loved and highlighted.
+
+# Grid approximation
+
+```{r}
+# define grid
+
+p_grid <- seq(from = 0, 
+              to = 1, 
+              length.out = 20)
+
+p_grid
+# define prior
+
+prior <- rep(1,20)
+
+prior
+# compute likelihood at each value in the grid
+
+likelihood <- dbinom(6, 
+                     size = 9, 
+                     prob = p_grid)
+
+likelihood
+# compute product of likeligood and prior
+unstd_posterior <- likelihood * prior
+
+unstd_posterior
+# standarfize posterior, so it sums to 1
+posterior <- unstd_posterior / sum(unstd_posterior)
+
+posterior
+```
+
+Now we plot it using base
+
+```{r}
+
+plot(p_grid,
+     posterior,
+     type = "b",
+     xlab = "probability of water",
+     ylab = "posterior_probability")
+mtext("20 points")
+
+```
+
+Now let's wrap that in a function
+
+```{r}
+
+grid_approx_binom_water <- function(n_grids){
+  
+p_grid <- seq(from = 0, 
+              to = 1, 
+              length.out = n_grids)
+
+p_grid
+# define prior
+
+prior <- rep(1,n_grids)
+
+prior
+# compute likelihood at each value in the grid
+
+likelihood <- dbinom(6, 
+                     size = 9, 
+                     prob = p_grid)
+
+likelihood
+# compute product of likeligood and prior
+unstd_posterior <- likelihood * prior
+
+unstd_posterior
+# standarfize posterior, so it sums to 1
+posterior <- unstd_posterior / sum(unstd_posterior)
+
+data.frame(posterior = posterior,
+           p_grid = p_grid)
+}
+
+plot_grid_approx <- function(posterior_samples,
+                             p_grid){
+plot(x = p_grid,
+     y = posterior_samples,
+     type = "b",
+     xlab = "probability of water",
+     ylab = "posterior_probability")
+mtext("20 points")
+}
+
+library(tidyverse)
+
+  
+plot_posterior <- function(data){
+  ggplot(data,
+         aes_string(x = "p_grid",
+                    y = "posterior")) + 
+  geom_point() + 
+  geom_line()
+}
+
+grid_approx_binom_water(20) %>% plot_posterior()
+
+grid_approx_binom_water(5) %>% plot_posterior()
+  
+grid_approx_binom_water(4) %>% plot_posterior()
+  
+
+```
+
+Now, to replicate the different priors in Figure 2.5, try these lines of code - one at a time - for the prior grid:
+
+```{r}
+
+
+grid_approx_binom_water <- function(n_grids,
+                                    p_grid = seq(from = 0, 
+                                                 to = 1, 
+                                                 length.out = n_grids),
+                                    prior = rep(1,n_grids)){
+  
+# p_grid <- seq(from = 0, to = 1, length.out = n_grids)
+# define prior
+
+# prior <- rep(1,n_grids)
+
+# compute likelihood at each value in the grid
+
+likelihood <- dbinom(6, 
+                     size = 9, 
+                     prob = p_grid)
+
+# compute product of likeligood and prior
+unstd_posterior <- likelihood * prior
+
+# standarfize posterior, so it sums to 1
+posterior <- unstd_posterior / sum(unstd_posterior)
+
+data.frame(posterior = posterior,
+           p_grid = p_grid)
+}
+
+grid_approx_binom_water(n_grids = 20)
+
+grid_approx_binom_water(n_grids = 20,
+                        prior = ifelse(p_grid < 0.5, 0, 1)) %>%
+  plot_posterior()
+
+grid_approx_binom_water(n_grids = 20,
+                        prior = exp(-5 * abs(p_grid-0.5))) %>%
+  plot_posterior()
+
+```
+
