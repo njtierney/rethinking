@@ -1,0 +1,21 @@
+---
+title: 'Chapter 3: Sampling the imaginary'
+output: html_document
+---
+
+Vampires!
+
+```{r}
+pr_pv <- 0.95
+
+pr_pm <- 0.01
+
+pr_v <- 0.001
+
+pr_p <- pr_pv * pr_v + pr_pm * (1 - pr_v)
+
+pr_vp <- pr_pv * pr_v / pr_p
+
+pr_vp
+```
+

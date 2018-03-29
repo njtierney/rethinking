@@ -162,3 +162,18 @@ grid_approx_binom_water(n_grids = 20,
 
 ```
 
+# Quadratic approximation
+
+```{r}
+# install.packages("rethinking")
+library(rethinking)
+
+globe_qa <- rethinking::map(
+  alist(w ~ dbinom(9, p),
+        p ~ dunif(0,1)),
+  data = list(w = 6)
+)
+
+rethinking::precis(globe_qa)
+```
+
