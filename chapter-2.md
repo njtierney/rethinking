@@ -7,7 +7,23 @@ output:
 
 # Highlights
 
-> Soon to appear sections that I loved and highlighted.
+> Bayesian analysis provides a general way to discover relevant information and process it logically. Just don't think that it is the only way.
+
+> In order to make good inference about what actually happened, it helps to consider everything that could have happened.
+
+> ... if there are important differences between the model and reality, then there is no logical gaurantee of large world performance. ... even if the two worlds did match, any particular sample of data could still be misleading...keep in mind two principles: (1) A model's certainty is no gaurantee that the model is a good one, (2) it is important to supervise and critique your model's work.
+
+> It is important to check the model's inferences in light of aspects of the data it doe not know about. Such checks are an inherently creative interprise, left to the analyst and the scientific community. Golems are very bad at it.
+
+> ... The likelihood maps each conjecture - such as a proportion of water on the globe - onto the relative number of ways the data could occur, given that possibility...the likelihood needs to tell you the probability of any possible observation, for any psosible state of the (small) world, such as a proportion of water on a globe...Just keep in mind that the job of the likelihood is to tell us the realtive number of ways to see the data, given [values for parameters].
+
+> Data are measured and known; parameters are unknown and must be estimated from data.
+
+> ... none of this should be understood to mean that any statistical analysis is not inherently subjective, because of course it is - lots of little subjective decisions are involved in all parts of science. It's just that priors and Bayesian data analysis are nomore inherently subjective than are likelihoods and the repeat sampling assumptions required for significance testing.
+
+In the summary:
+
+> > ...a Bayesian model is a composite of a likelihood, a choice of parameters, and a prior. The likelihood provides the plausibility of an observation (data), given a fixed value for the parameters. The prior provides the plausibility of each possible value of the parameters, before accounting for the data.
 
 # Grid approximation
 
@@ -148,7 +164,7 @@ library(tidyverse)
 ```
 
 ```
-## ── Attaching packages ─────────────────────────────────────────────────── tidyverse 1.2.1 ──
+## ── Attaching packages ────────────────────────────────────────────── tidyverse 1.2.1.9001 ──
 ```
 
 ```
@@ -263,4 +279,76 @@ grid_approx_binom_water(n_grids = 20,
 ```
 
 ![](chapter-2_files/figure-html/unnamed-chunk-4-2.png)<!-- -->
+
+# Quadratic approximation
+
+
+```r
+# install.packages("rethinking")
+library(rethinking)
+```
+
+```
+## Loading required package: rstan
+```
+
+```
+## Loading required package: StanHeaders
+```
+
+```
+## rstan (Version 2.17.3, GitRev: 2e1f913d3ca3)
+```
+
+```
+## For execution on a local, multicore CPU with excess RAM we recommend calling
+## options(mc.cores = parallel::detectCores()).
+## To avoid recompilation of unchanged Stan programs, we recommend calling
+## rstan_options(auto_write = TRUE)
+```
+
+```
+## 
+## Attaching package: 'rstan'
+```
+
+```
+## The following object is masked from 'package:tidyr':
+## 
+##     extract
+```
+
+```
+## Loading required package: parallel
+```
+
+```
+## rethinking (Version 1.59)
+```
+
+```
+## 
+## Attaching package: 'rethinking'
+```
+
+```
+## The following object is masked from 'package:purrr':
+## 
+##     map
+```
+
+```r
+globe_qa <- rethinking::map(
+  alist(w ~ dbinom(9, p),
+        p ~ dunif(0,1)),
+  data = list(w = 6)
+)
+
+rethinking::precis(globe_qa)
+```
+
+```
+##   Mean StdDev 5.5% 94.5%
+## p 0.67   0.16 0.42  0.92
+```
 
