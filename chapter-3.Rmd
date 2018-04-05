@@ -19,3 +19,284 @@ pr_vp <- pr_pv * pr_v / pr_p
 pr_vp
 ```
 
+## 3.1 Sampling from a grid-approximate posterior
+
+```{r}
+
+p_grid <- seq(from = 0,
+              to = 1,
+              length.out = 1000)
+
+prior <- rep(1, 1000)
+
+likelihood <- dbinom(6, 
+                     size = 9,
+                     prob = p_grid)
+
+posterior <- likelihood * prior
+
+posterior <- posterior / sum(posterior)
+
+```
+
+Draw 10K samples from the posterior.
+
+```{r}
+samples <- sample(x = p_grid,
+                  size = 1e4,
+                  replace = TRUE,
+                  prob = posterior)
+
+plot(samples)
+
+rethinking::dens(samples)
+```
+
+## 3.2 sampling to summarize
+
+```{r}
+# add up posterior probability where p < 0.5
+sum(posterior[p_grid < 0.5])
+
+```
+
+```{r}
+sum(samples < 0.5) / 1e4
+
+sum(samples > 0.5 & samples < 0.75) / 1e4
+
+```
+
+## Loss functions
+
+```{r}
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+
+prior <- rep(1,1000)
+
+likelihood <- dbinom(3, size = 3, prob = p_grid)
+
+posterior <- likelihood * prior
+
+posterior <- posterior / sum(posterior)
+
+samples <- sample(p_grid, size = 1e4, replace = TRUE, prob = posterior)
+```
+
+
+```{r}
+sum(posterior * abs(0.5 - p_grid))
+```
+
+And for every possible decision
+
+```{r}
+loss <- sapply(p_grid, function(d) sum(posterior*abs(d - p_grid)))
+
+which.min(loss)
+
+plot(loss, type = "l")
+
+p_grid[which.min(loss)]
+
+
+```
+
+# 3.3 to simulate prediction
+
+```{r}
+dbinom(0:2, size = 2, prob  = 0.7)
+dbinom(0:3, size = 2, prob  = 0.7)
+dbinom(0:2, size = 3, prob  = 0.7)
+dbinom(0:3, size = 3, prob  = 0.7)
+```
+
+```{r}
+rbinom(1, size = 2, prob = 0.7)
+
+rbinom(10, size = 2, prob = 0.7)
+
+dummy_w <- rbinom(100000, size = 2, prob = 0.7)
+
+table(dummy_w) / length(dummy_w)
+
+```
+
+simulate 9 tosses
+
+```{r}
+dummy_w <- rbinom(1e5, size = 9, prob = 0.7)
+
+rethinking::simplehist(dummy_w,
+                       xlab = "dummy water count")
+```
+
+```{r}
+rethinking::simplehist(rbinom(1e6, 
+                              size = 100, 
+                              prob = 0.7),
+                       xlab = "dummy water count")
+
+```
+
+```{r}
+w <- rbinom(1e4, size = 9, prob = 0.6)
+
+rethinking::simplehist(w)
+
+w <- rbinom(1e4, size = 9, prob = samples)
+
+rethinking::simplehist(w)
+
+```
+
+# exercises
+
+```{r}
+library(rethinking)
+
+data(homeworkch3)
+
+parameter_grid <- seq(from = 0, to = 1, length.out = 1000)
+
+prior <- rep(1,1000)
+
+likelihood <- dbinom(sum(birth1, birth2), 
+                     size = c(length(birth1) + length(birth2)),
+                     prob = parameter_grid)
+
+posterior <- likelihood * prior
+
+posterior <- posterior / sum(posterior)
+
+parameter_grid[which.max(posterior)]
+
+samples <- sample(parameter_grid, 
+                  size = 1e4, 
+                  replace = TRUE, 
+                  prob = posterior)
+
+library(tidyverse)
+library(readr)
+
+rethinking::HPDI(samples,
+                 prob = c(0.5, .89, .97)) %>%
+  as.data.frame()
+
+sapply(c(0.5, .89, .97), 
+       function(p) coda::HPDinterval(coda::as.mcmc(samples), 
+        prob = p)) %>%
+  t() %>%
+  as_tibble() %>%
+  rename("lower" = V1,
+         "upper" = V2) %>%
+  mutate(probs = c(0.5, .89, .97)) %>%
+  select(probs, everything())
+  
+
+```
+
+```{r}
+
+dummy_sample <-  rbinom(n = 10000,
+                        size = 200,
+                        prob = samples)
+
+mean(dummy_sample)
+median(dummy_sample)
+
+hist(dummy_sample) 
+
+abline(v = 111, col = "red")
+
+rethinking::dens(dummy_sample) 
+
+abline(v = 111, col = "red")
+
+
+
+```
+
+3H4
+```{r}
+
+parameter_grid <- seq(from = 0, to = 1, length.out = 1000)
+
+prior <- rep(1,1000)
+
+likelihood <- dbinom(sum(birth1), 
+                     size = c(length(birth1)),
+                     prob = parameter_grid)
+
+posterior <- likelihood * prior
+
+posterior <- posterior / sum(posterior)
+
+parameter_grid[which.max(posterior)]
+
+samples <- sample(parameter_grid, 
+                  size = 1e4, 
+                  replace = TRUE, 
+                  prob = posterior)
+
+dummy_sample <-  rbinom(n = 10000,
+                        size = 100,
+                        prob = samples)
+
+mean(dummy_sample)
+median(dummy_sample)
+
+hist(dummy_sample) 
+
+abline(v = sum(birth1), col = "red")
+
+rethinking::dens(dummy_sample) 
+
+abline(v = sum(birth1), col = "red")
+
+```
+
+3H5
+
+```{r}
+
+parameter_grid <- seq(from = 0, to = 1, length.out = 1000)
+
+prior <- rep(1,1000)
+
+dat_birth <- data.frame(birth1,birth2)
+
+n_boys_2nd <- dat_birth %>%
+  filter(birth1 == 0) %>% length
+
+likelihood <- dbinom(n_boys_2nd, 
+                     size = 49,
+                     prob = parameter_grid)
+
+posterior <- likelihood * prior
+
+posterior <- posterior / sum(posterior)
+
+parameter_grid[which.max(posterior)]
+
+posterior_samples <- sample(parameter_grid, 
+                  size = 1e4, 
+                  replace = TRUE, 
+                  prob = posterior)
+
+dummy_sample <-  rbinom(n = 10000,
+                        size = 49,
+                        prob = posterior_samples)
+
+mean(dummy_sample)
+median(dummy_sample)
+
+hist(dummy_sample) 
+
+abline(v = n_boys_2nd, col = "red")
+
+rethinking::dens(dummy_sample) 
+
+abline(v = n_boys_2nd, col = "red")
+```
+
