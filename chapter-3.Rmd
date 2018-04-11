@@ -3,6 +3,18 @@ title: 'Chapter 3: Sampling the imaginary'
 output: html_document
 ---
 
+# highlights
+
+> The posterior distribution is the relative count of all the ways the data could happen (the data we have, not some other data), conditional on the different combination of parameter values. 
+
+> Horoscopic advice. 
+- Intercept. "alpha" - no idea where it might end up, so broad Gaussian prior
+- Slopes. "beta" Gaussian, center on zero, scale so extreme estiamtes ruled out, "regularization"
+- Scale. "sigma" uniform with reasonable upper bound usually fine; later we'll use Cauchy or exponential for regularization
+- Check prior predictive for sanity
+
+
+
 Vampires!
 
 ```{r}
