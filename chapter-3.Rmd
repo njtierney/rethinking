@@ -13,7 +13,14 @@ output: html_document
 - Scale. "sigma" uniform with reasonable upper bound usually fine; later we'll use Cauchy or exponential for regularization
 - Check prior predictive for sanity
 
+> Anything that depends upon the posterior distribution, is also a distribution. So predictions depend on the posterior - they are a distribution.
 
+> If you could only guess one number, what would it be? 
+
+> The goal is we have got to project the uncertainty of the frustrating computer thing onto the scientific space that we care about.
+
+> demystify the process
+> Empower you to 
 
 Vampires!
 
