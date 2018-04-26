@@ -1,0 +1,38 @@
+---
+title: 'Chapter 4: Linear Models'
+output: html_document
+---
+
+```{r log}
+
+log_big <- replicate(1000,
+                     log(prod(1 + runif(12, 0, 0.5))))
+
+hist(log_big)
+
+plot(density(log_big))
+
+```
+
+
+```{r}
+curve(dnorm(x,178,20), from = 100, to = 250)
+```
+
+```{r}
+curve(dunif(x,0,50), from = 10, to = 60)
+```
+
+Sampling to get an idea of what our heights might look like:
+
+```{r}
+sample_mu <- rnorm(1e4, 178, 20)
+
+sample_sigma <- runif(1e4, 0, 50)
+
+prior_h <- rnorm(1e4, sample_mu, sample_sigma)
+
+rethinking::dens(prior_h)
+```
+
+Playing around with the parameters of the priors to see how this effects the prior probability density of heights.

@@ -20,7 +20,23 @@ output: html_document
 > The goal is we have got to project the uncertainty of the frustrating computer thing onto the scientific space that we care about.
 
 > demystify the process
-> Empower you to 
+> Empower you
+
+> prime intervals...67%, 89%. So what?...Nothing. They're just as good as other intervals. The GOAL is to describe the shape of the distribution, nothing amazing happens at the boundaries.
+
+> we laugh, because the alternative is to cry.
+
+> 95% is a pure convention.
+
+> polynomial models suck, but are very common
+
+> the polynomial model has the runge phenomenon - at the limits of prediction the model gives crazy predictions.
+
+> what would be better than polynomial? Perhaps a biological model?
+
+> scaling and zero centering things helps the model optimise , due to the bizarre sorcery of how numerical intergration works.
+
+
 
 Vampires!
 
