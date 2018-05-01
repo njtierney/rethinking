@@ -36,3 +36,78 @@ rethinking::dens(prior_h)
 ```
 
 Playing around with the parameters of the priors to see how this effects the prior probability density of heights.
+
+
+Code chunk 4.14
+
+setup - get the data
+
+```{r}
+library(rethinking)
+data(Howell1)
+
+d <- Howell1
+
+d2 <- d[d$age >= 18, ]
+```
+
+
+```{r}
+# create the grid of values of mu
+mu.list <- seq(from = 140,
+               to = 160,
+               length.out = 200)
+
+# create the grid of values of sigma
+sigma.list <- seq(from = 4,
+                  to = 9,
+                  length.out = 200)
+
+# get every combination of mu and sigma
+post <- expand.grid(mu = mu.list,
+                    sigma = sigma.list)
+
+# now, for all the values of mu and sigma, create a normal distribution,
+# 
+post$LL <- sapply(1:nrow(post),
+                  function(i){
+                    sum(dnorm(x = d2$height,
+                              mean = post$mu[i],
+                              sd = post$sigma[i],
+                              log = TRUE))
+                  })
+
+post$prod <- post$LL + 
+  dnorm(x = post$mu, 
+        mean = 178, 
+        sd = 20, 
+        log = TRUE) + 
+  dunif(x = post$sigma,
+        min = 0,
+        max = 50,
+        log = TRUE)
+
+post$prob <- exp(post$prod - max(post$prod))
+```
+
+plot the contours with
+
+```{r}
+contour_xyz(post$mu,
+             post$sigma,
+             post$prob)
+```
+
+Looks like there's some large spaces that have suuuuper low density?
+
+now for an image plot
+
+```{r}
+image_xyz(post$mu,
+          post$sigma,
+          post$prob)
+```
+
+# 4.3.4 Sampling from the posterior.
+
+
