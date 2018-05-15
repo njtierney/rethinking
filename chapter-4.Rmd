@@ -110,4 +110,42 @@ image_xyz(post$mu,
 
 # 4.3.4 Sampling from the posterior.
 
+4.17
+
+```{r}
+
+sample.rows <- sample(1:nrow(post),
+                      size = 1e4,
+                      replace = TRUE,
+                      prob = post$prob)
+
+sample.mu <- post$mu[sample.rows]
+
+sample.sigma <- post$sigma[sample.rows]
+
+```
+
+4.18
+
+```{r}
+plot(sample.mu,
+     sample.sigma,
+     cex = 0.7,
+     pch = 16,
+     col = col.alpha(rangi2, 0.5))
+```
+
+4.19
+
+```{r}
+dens(sample.mu)
+dens(sample.sigma)
+```
+
+4.20
+
+```{r}
+HPDI(sample.mu)
+HPDI(sample.sigma)
+```
 
