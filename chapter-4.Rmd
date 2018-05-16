@@ -149,3 +149,83 @@ HPDI(sample.mu)
 HPDI(sample.sigma)
 ```
 
+code chunk 4.21
+
+```{r chunk-4-21}
+d3 <- sample(d2$height, size = 2)
+```
+
+chunk 4.22
+
+```{r chunk-4-22}
+
+# create the grid of values of mu
+mu.list <- seq(from = 150,
+               to = 170,
+               length.out = 200)
+
+# create the grid of values of sigma
+sigma.list <- seq(from = 4,
+                  to = 20,
+                  length.out = 200)
+
+# get every combination of mu and sigma
+post2 <- expand.grid(mu = mu.list,
+                    sigma = sigma.list)
+
+# now, for all the values of mu and sigma, create a normal distribution,
+# 
+post2$LL <- sapply(1:nrow(post2),
+                  function(i){
+                    sum(dnorm(x = d3,
+                              mean = post2$mu[i],
+                              sd = post2$sigma[i],
+                              log = TRUE))
+                  })
+
+post2$prod <- post2$LL + 
+  dnorm(x = post2$mu, 
+        mean = 178, 
+        sd = 20, 
+        log = TRUE) + 
+  dunif(x = post2$sigma,
+        min = 0,
+        max = 50,
+        log = TRUE)
+
+post2$prob <- exp(post2$prod - max(post2$prod))
+
+sample2.rows <- sample(1:nrow(post2), 
+                       size = 1e4,
+                       replace = TRUE,
+                       prob = post2$prob)
+
+sample2.mu <- post2$mu[sample2.rows]
+
+sample2.sigma <- post2$sigma[sample2.rows]
+
+plot(sample2.mu,
+     sample2.sigma,
+     cex = 0.5,
+     col = col.alpha(rangi2, 0.1),
+     xlab = "mu",
+     ylab = "sigma", 
+     pch = 16)
+
+```
+
+```{r chunk-4-23}
+
+dens(sample2.sigma, norm.comp = TRUE)
+
+```
+
+# 4.3.5
+
+
+
+# highlights from the video:
+
+-  Don't give into the typical stereotype of if the interval covers zero, this does not mean that it is not useful - if it crosses zero, the effect doesn't dissapear!
+- Take the table or plot of the coefficients, and treat this as an "interview with the golem". "you've fed data to the golem, produced a posterior distribution, so you need to patiently have an interview with this ... thing".
+- 
