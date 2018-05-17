@@ -228,4 +228,19 @@ dens(sample2.sigma, norm.comp = TRUE)
 
 -  Don't give into the typical stereotype of if the interval covers zero, this does not mean that it is not useful - if it crosses zero, the effect doesn't dissapear!
 - Take the table or plot of the coefficients, and treat this as an "interview with the golem". "you've fed data to the golem, produced a posterior distribution, so you need to patiently have an interview with this ... thing".
-- 
+
+- Horoscopic plotting advice on exploring models:
+  - Predictive residual plots
+  - Counterfactual plots
+    - produce impossible graphs that could not exist in your system, to help you understand your own models.
+  - Posterior Predictive plots
+  - Invent your own!
+  
+- Never analyze residuals! They are not data, do not treat them as such.
+-
+
+Recipe for Predictive residual plots:
+
+- Regress predictor on other predictors
+- computer predictor residuals
+- regress outcome on residuals
